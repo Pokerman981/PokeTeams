@@ -1,0 +1,79 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+        maven {
+            name = 'forge'
+            url = 'http://files.minecraftforge.net/maven'
+        }
+        maven {
+            name = 'minecrell'
+            url = 'http://repo.minecrell.net/releases'
+        }
+    }
+
+    dependencies {
+        classpath 'net.minecrell:VanillaGradle:2.0.3_1'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+    }
+}
+
+apply plugin: 'net.minecrell.vanilla.server.library'
+
+group = 'me.pokerman99'
+archivesBaseName = "PokeTeams"
+version = 'v1.0'
+
+apply plugin: 'java'
+
+def minecraftVersion = "1.10.2"
+
+configurations {
+    shade
+    compile.extendsFrom shade
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'spongepowered-repo'
+        url = 'http://repo.spongepowered.org/maven/'
+    }
+
+    maven {
+        name = 'jitpack'
+        url = 'https://jitpack.io'
+    }
+
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+minecraft {
+    version = "${minecraftVersion}"
+    mappings = 'snapshot_20161117'
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile 'org.spongepowered:spongeapi:5.1.0'
+    compile 'com.pixelmonmod.pixelmon:Pixelmon-1.10.2-5.1.2-universal'
+    compile 'br.net.fabiozumbi12.UltimateChat:UltimateChat-Sponge-1.7.3-b66'
+    compile 'io.github.nucleuspowered.nucleus:Nucleus-1.0.0-1.10.2-S5.1-plugin'
+    compileOnly "org.projectlombok:lombok:1.16.10"
+    compile group: 'commons-net', name: 'commons-net', version: '3.3'
+}
+
+jar {
+    includeEmptyDirs = false
+    classifier = 'universal-PX5.1.2'
+    configurations.shade.each { dep ->
+        from(project.zipTree(dep)){
+            exclude 'META-INF', 'META-INF/**'
+        }
+    }
+}
